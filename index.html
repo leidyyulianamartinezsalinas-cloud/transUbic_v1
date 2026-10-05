@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<!--
+  ================================================================
+  index.html — PÁGINA DE INICIO de transUbic
+  ----------------------------------------------------------------
+  Partes de la página:
+    1. Encabezado (logo, menú y botón "Mi cuenta")
+    2. Portada con el buscador de rutas
+    3. Tablero: rutas, planificador, estado del servicio y novedades
+    4. Beneficios
+    5. Pie de página
+    6. Ventana (modal) para iniciar sesión / crear cuenta / recuperar contraseña
+
+  Los botones usan el atributo onclick="nombreDeFuncion()".
+  Eso significa: "cuando hagan clic aquí, ejecuta esta función de JavaScript".
+  Las funciones están en js/inicio.js
+  ================================================================
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <!-- Hace que la página se vea bien en celulares -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>transUbic | Movilidad que conecta contigo</title>
+  <!-- Archivo de estilos (colores, tamaños, posiciones) -->
+  <link rel="stylesheet" href="css/estilos.css">
+  <!-- Ícono de la pestaña del navegador -->
+  <link rel="icon" type="image/png" href="img/logo.png">
+</head>
+<body>
+
+  <!-- ============================================================
+       1. ENCABEZADO
+       ============================================================ -->
+  <header class="site-header">
+    <!-- Logo: al hacer clic sube al inicio de la página -->
+    <a class="brand" href="#inicio">
+      <img src="img/logo.png" alt="transUbic">
+      <span class="brand-name">trans<span>Ubic</span></span>
+    </a>
+
+    <!-- Menú principal. Cada enlace lleva a una parte de la página.
+         href="#rutas" significa "baja hasta el elemento con id='rutas'" -->
+    <nav class="main-nav" id="menuPrincipal">
+      <a class="active" href="#inicio" onclick="marcarMenu(this)"><span>⌂</span> Inicio</a>
+      <a href="#rutas" onclick="marcarMenu(this)">Rutas</a>
+      <a href="#planificador" onclick="marcarMenu(this, 'Las paradas de cada ruta se ven en el mapa del planificador.')">Paradas</a>
+      <a href="#estado" onclick="marcarMenu(this, 'Horario: lunes a sábado 4:30 a. m. – 11:00 p. m. · Domingos y festivos 5:00 a. m. – 10:00 p. m.')">Horarios</a>
+      <a href="#beneficios" onclick="marcarMenu(this, 'Tarifa general $3.200 · Estudiantes $2.400 (valores de ejemplo).')">Tarifas</a>
+      <a href="#novedades" onclick="marcarMenu(this)">Novedades</a>
+      <a href="#ayuda" onclick="marcarMenu(this, '¿Necesitas ayuda? Escríbenos a ayuda@transubic.com')">Ayuda</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="language" id="botonIdioma" type="button" onclick="cambiarIdioma()">◎ &nbsp; ES⌄</button>
+      <!-- Este botón cambia si la persona ya inició sesión (ver actualizarBotonCuenta en datos.js) -->
+      <button class="account" id="botonCuenta" type="button" onclick="clicEnMiCuenta()">● &nbsp; Mi cuenta</button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ============================================================
+         2. PORTADA CON EL BUSCADOR
+         ============================================================ -->
+    <section class="hero" id="inicio">
+      <div class="hero-copy">
+        <h1>Muévete mejor,<br><strong>llega a tu destino</strong></h1>
+        <p>Planifica tu viaje en bus de manera fácil,<br>rápida y confiable.</p>
+
+        <div class="search-card">
+          <div class="search-row">
+            <!-- Campo "Desde" -->
+            <div class="field">
+              <span>⌾</span>
+              <div><small>Desde</small><strong id="origen">Ubicación actual</strong></div>
+              <b onclick="usarUbicacionActual()" title="Usar mi ubicación actual">⌾</b>
+            </div>
+
+            <!-- Botón para intercambiar origen y destino -->
+            <button class="swap" type="button" onclick="intercambiar()" title="Intercambiar origen y destino">⇄</button>
+
+            <!-- Campo "Hasta": aquí la persona escribe a dónde va.
+                 onkeydown se ejecuta cada vez que presiona una tecla -->
+            <label class="field">
+              <span>⌖</span>
+              <div><small>Hasta</small><input id="destino" class="field-input" type="search" placeholder="¿A dónde vas?" autocomplete="off" onkeydown="teclaEnDestino(event)"></div>
+              <b>⌖</b>
+            </label>
+
+            <button class="search-btn" type="button" onclick="buscarRutas()">Buscar ruta</button>
+          </div>
+
+          <!-- Búsquedas rápidas: cada botón busca un lugar -->
+          <div class="quick-title">Búsquedas rápidas</div>
+          <div class="quick-links">
+            <button type="button" onclick="busquedaRapida('Terminal Sur')">▣ &nbsp; Terminal Sur</button>
+            <button type="button" onclick="busquedaRapida('Centro')">▦ &nbsp; Centro</button>
+            <button type="button" onclick="busquedaRapida('Universidad')">◆ &nbsp; Universidad</button>
+            <button type="button" onclick="busquedaRapida('Parque Central')">♣ &nbsp; Parque Central</button>
+            <button type="button" onclick="busquedaRapida('Hospital General')">▣ &nbsp; Hospital General</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Dibujo del bus hecho SOLO con CSS (cada div es una figura) -->
+      <div class="hero-art">
+        <div class="sky"></div>
+        <div class="city">
+          <i></i><i></i><i></i><i></i><i></i>
+        </div>
+        <div class="tree tree-a"></div>
+        <div class="tree tree-b"></div>
+        <div class="bus-stop"><span>⌁</span><div></div></div>
+        <div class="road road-back"></div>
+        <div class="road road-front"></div>
+        <div class="bus">
+          <div class="bus-top"></div>
+          <div class="bus-window w1"></div><div class="bus-window w2"></div>
+          <div class="bus-window w3"></div><div class="bus-window w4"></div>
+          <div class="bus-front"></div>
+          <div class="wheel wheel-a"></div><div class="wheel wheel-b"></div>
+        </div>
+        <div class="bus-sign">▣</div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         3. TABLERO
+         ============================================================ -->
+    <section class="dashboard-grid">
+
+      <!-- Rutas: la lista la llena JavaScript (función mostrarRutas) -->
+      <article class="panel routes-panel" id="rutas">
+        <div class="panel-head">
+          <h2 id="tituloRutas">Rutas más utilizadas</h2>
+          <a href="#rutas" onclick="verTodasLasRutas()">Ver todas</a>
+        </div>
+        <div class="route-list" id="listaRutas"></div>
+      </article>
+
+      <!-- Planificador con un mini mapa dibujado con CSS -->
+      <article class="panel planner-panel" id="planificador">
+        <div class="panel-head centered"><h2>Planifica tu viaje</h2></div>
+        <div class="mini-map">
+          <span class="line l1"></span><span class="line l2"></span><span class="line l3"></span><span class="line l4"></span>
+          <i class="dot d1"></i><i class="dot d2"></i><i class="dot d3"></i><i class="dot d4"></i><i class="dot d5"></i>
+          <div class="location-dot"></div>
+        </div>
+        <p>Consulta horarios, rutas y transbordos<br>para llegar a tu destino.</p>
+        <button class="primary-btn" type="button" onclick="planificarViaje()">⌘ &nbsp; Planificar viaje</button>
+      </article>
+
+      <div class="right-column">
+        <!-- Estado del servicio -->
+        <article class="panel service-panel" id="estado">
+          <div class="panel-head"><h2>Estado del servicio</h2><a href="#novedades">Ver todas</a></div>
+          <div class="service-ok">
+            <div class="check">✓</div>
+            <div><b>Servicio funcionando con normalidad</b><span>No hay novedades que afecten la operación.</span></div>
+          </div>
+          <div class="updated">
+            <time id="horaActualizado">Actualizado: Hoy, 8:30 a. m.</time>
+            <span onclick="actualizarEstado()" title="Actualizar">↻</span>
+          </div>
+        </article>
+
+        <!-- Novedades -->
+        <article class="panel news-panel" id="novedades">
+          <div class="panel-head"><h2>Novedades del servicio</h2><a href="#novedades" onclick="verTodasLasNovedades()">Ver todas</a></div>
+          <div class="news warning"><span>!</span><div><b>Desvío temporal en Calle 50</b><small>Por obras viales. Rutas R10 y M404 tomarán Carrera 48.</small></div><time>8:20 a. m.</time></div>
+          <div class="news info"><span>i</span><div><b>Horarios especiales</b><small>Domingo 26 de mayo por evento en el Centro.</small></div><time>7:45 a. m.</time></div>
+          <!-- Esta novedad empieza oculta (hidden) y aparece con "Ver todas" -->
+          <div class="news info" id="novedadExtra" hidden><span>i</span><div><b>Nueva parada en Universidad</b><small>La ruta X55 ahora para frente a la entrada principal.</small></div><time>Ayer</time></div>
+        </article>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         4. BENEFICIOS (cada tarjeta también se puede tocar)
+         ============================================================ -->
+    <section class="features" id="beneficios">
+      <div onclick="beneficioTiempoReal()"><span>◔</span><div><b>Información en tiempo real</b><p>Consulta la ubicación de los buses y tiempos de llegada.</p></div></div>
+      <div onclick="beneficioAlertas()"><span>♧</span><div><b>Alertas personalizadas</b><p>Recibe notificaciones sobre tu ruta y novedades del servicio.</p></div></div>
+      <div onclick="beneficioFavoritos()"><span>★</span><div><b>Guarda tus favoritos</b><p>Accede rápido a tus rutas, paradas y destinos frecuentes.</p></div></div>
+    </section>
+  </main>
+
+  <!-- ============================================================
+       5. PIE DE PÁGINA
+       ============================================================ -->
+  <footer id="ayuda">
+    <div class="footer-brand"><span class="footer-pin">⌖</span><b>transUbic</b>, movilidad que conecta contigo.</div>
+    <div class="social">Síguenos en &nbsp;
+      <span onclick="abrirRedSocial('Facebook')">●</span> &nbsp;
+      <span onclick="abrirRedSocial('Instagram')">◎</span> &nbsp;
+      <span onclick="abrirRedSocial('X')">𝕏</span> &nbsp;
+      <span onclick="abrirRedSocial('YouTube')">▶</span>
+    </div>
+  </footer>
+
+  <!-- ============================================================
+       6. VENTANA DE ACCESO (MODAL)
+       ------------------------------------------------------------
+       Empieza oculta gracias al atributo "hidden".
+       JavaScript le quita "hidden" para mostrarla.
+       Tiene 3 formularios y solo se ve uno a la vez:
+         formLogin, formRegistro y formRecuperar
+       ============================================================ -->
+  <div class="auth-overlay" id="ventanaAcceso" hidden onclick="clicFueraDeLaVentana(event)">
+    <div class="auth-card">
+      <button type="button" class="auth-close" onclick="cerrarVentana()">×</button>
+
+      <div class="auth-brand">
+        <img src="img/logo.png" alt="">
+        <span class="brand-name">trans<span>Ubic</span></span>
+      </div>
+
+      <!-- Pestañas para cambiar entre "Iniciar sesión" y "Crear cuenta" -->
+      <div class="auth-tabs" id="pestanas">
+        <button type="button" id="pestanaLogin" class="is-active" onclick="cambiarVista('login')">Iniciar sesión</button>
+        <button type="button" id="pestanaRegistro" onclick="cambiarVista('registro')">Crear cuenta</button>
+      </div>
+
+      <!-- ---------- A) INICIAR SESIÓN ----------
+           onsubmit se ejecuta cuando se envía el formulario (botón submit o Enter).
+           novalidate: desactiva las validaciones del navegador, porque hacemos las nuestras. -->
+      <form class="auth-form" id="formLogin" onsubmit="iniciarSesion(event)" novalidate>
+        <h2>Bienvenido de nuevo</h2>
+        <p class="auth-sub">Ingresa con tu correo y contraseña.</p>
+
+        <label class="auth-field" data-campo="correo"><span>Correo electrónico</span>
+          <input type="email" name="correo" placeholder="tucorreo@ejemplo.com">
+        </label>
+        <label class="auth-field" data-campo="contrasena"><span>Contraseña</span>
+          <div class="auth-pass">
+            <input type="password" name="contrasena">
+            <button type="button" class="auth-eye" onclick="verContrasena(this)">Ver</button>
+          </div>
+        </label>
+
+        <!-- Aquí se muestran los intentos que quedan (3 puntos) -->
+        <div class="auth-attempts" id="cajaIntentos" hidden></div>
+        <p class="auth-error"></p>
+
+        <button class="primary-btn auth-submit" type="submit">Iniciar sesión</button>
+        <button type="button" class="auth-link" onclick="cambiarVista('recuperar')">¿Olvidaste tu contraseña?</button>
+
+        <!-- <details> es una caja que se abre y se cierra sola al hacer clic -->
+        <details class="auth-demo">
+          <summary>Cuentas de prueba (un actor por rol)</summary>
+          <div id="listaCuentasPrueba"></div>
+        </details>
+      </form>
+
+      <!-- ---------- B) CREAR CUENTA ---------- -->
+      <form class="auth-form" id="formRegistro" onsubmit="crearCuenta(event)" novalidate hidden>
+        <h2>Crea tu cuenta</h2>
+        <p class="auth-sub">Guarda tus rutas favoritas y recibe novedades del servicio.</p>
+        <div class="auth-grid">
+          <label class="auth-field auth-span" data-campo="nombre"><span>Nombre completo <em>*</em></span><input name="nombre"></label>
+          <label class="auth-field auth-span" data-campo="correo"><span>Correo electrónico <em>*</em></span><input type="email" name="correo"></label>
+          <label class="auth-field" data-campo="documento"><span>Documento <em>*</em></span><input name="documento" inputmode="numeric"></label>
+          <label class="auth-field" data-campo="telefono"><span>Teléfono <em>*</em></span><input type="tel" name="telefono"></label>
+          <label class="auth-field auth-span" data-campo="ciudad"><span>Ciudad</span><input name="ciudad"></label>
+          <label class="auth-field" data-campo="contrasena"><span>Contraseña <em>*</em></span><input type="password" name="contrasena"></label>
+          <label class="auth-field" data-campo="confirmar"><span>Confirmar <em>*</em></span><input type="password" name="confirmar"></label>
+        </div>
+        <small class="auth-hint">Mínimo 8 caracteres; puede ser solo números. Tu cuenta se crea como "Usuario"; el administrador puede asignarte otro rol.</small>
+        <label class="auth-check" data-campo="terminos"><input type="checkbox" name="terminos"> Acepto los términos de uso y la política de tratamiento de datos.</label>
+        <p class="auth-error"></p>
+        <button class="primary-btn auth-submit" type="submit">Crear cuenta</button>
+      </form>
+
+      <!-- ---------- C) RECUPERAR CONTRASEÑA (2 pasos) ---------- -->
+      <form class="auth-form" id="formRecuperar" onsubmit="recuperarContrasena(event)" novalidate hidden>
+        <h2>Recupera tu contraseña</h2>
+
+        <!-- Paso 1: escribir el correo -->
+        <div id="pasoUno">
+          <p class="auth-sub">Escribe el correo de tu cuenta y te enviaremos un código de verificación.</p>
+          <label class="auth-field" data-campo="correo"><span>Correo electrónico</span><input type="email" name="correo"></label>
+        </div>
+
+        <!-- Paso 2: escribir el código y la nueva contraseña -->
+        <div id="pasoDos" hidden>
+          <p class="auth-sub" id="textoCodigoEnviado"></p>
+          <label class="auth-field" data-campo="codigo"><span>Código de 6 dígitos</span><input name="codigo" inputmode="numeric" maxlength="6"></label>
+          <label class="auth-field" data-campo="nueva"><span>Nueva contraseña</span><input type="password" name="nueva"></label>
+          <label class="auth-field" data-campo="confirmar"><span>Confirmar contraseña</span><input type="password" name="confirmar"></label>
+        </div>
+
+        <p class="auth-error"></p>
+        <button class="primary-btn auth-submit" id="botonRecuperar" type="submit">Enviar código</button>
+        <button type="button" class="auth-link" onclick="cambiarVista('login')">← Volver a iniciar sesión</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Los archivos de JavaScript van al final, cuando todo el HTML ya existe.
+       El orden importa: primero datos.js (lo comparten las dos páginas) y luego inicio.js -->
+  <script src="js/datos.js"></script>
+  <script src="js/inicio.js"></script>
+</body>
+</html>

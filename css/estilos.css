@@ -1,0 +1,2083 @@
+/* ================================================================
+   estilos.css — Estilos de transUbic
+   ----------------------------------------------------------------
+   Cómo se lee una regla de CSS:
+
+       .nombre-de-clase {        <- a QUÉ elementos se aplica
+         color: red;             <- propiedad: valor;
+       }
+
+   - Un punto (.) significa "clase":  .panel  -> class="panel"
+   - Un numeral (#) significa "id":   #rutas  -> id="rutas"
+   - Dos nombres separados por espacio (.panel h2) significa
+     "los h2 que están DENTRO de .panel".
+   - El signo > (.field > span) significa "hijo directo".
+
+   Partes de este archivo:
+     1.  Colores y reglas generales
+     2.  Encabezado
+     3.  Portada y buscador
+     4.  Dibujo del bus (hecho solo con CSS)
+     5.  Tablero (rutas, planificador, estado, novedades)
+     6.  Beneficios y pie de página
+     7.  Ventana de acceso (modal)
+     8.  Mensajes flotantes
+     9.  Página "Mi cuenta"
+     10. Adaptación a pantallas pequeñas (celulares)
+   ================================================================ */
+
+
+/* ================================================================
+   1. COLORES Y REGLAS GENERALES
+   ================================================================ */
+
+/* box-sizing: border-box hace que el ancho incluya el borde y el relleno.
+   El * significa "todos los elementos". */
+* {
+  box-sizing: border-box;
+}
+
+/* Variables de colores: se definen una vez y se usan con var(--nombre).
+   Si queremos cambiar un color de toda la página, lo cambiamos solo aquí. */
+:root {
+  --pale-slate: #BFBDB1;
+  --cerulean: #247BA0;     /* azul principal (botones) */
+  --evergreen: #19381F;    /* verde oscuro */
+  --yellow-green: #9FD356; /* verde limón */
+  --seaweed: #21A179;      /* verde mar */
+  --ink: #18313a;          /* color del texto */
+  --muted: #66747a;        /* texto gris suave */
+  --line: #e5ebed;         /* líneas y bordes */
+  --bg: #f7fafb;           /* fondo de la página */
+  --white: #fff;
+}
+
+/* Desplazamiento suave cuando un enlace lleva a una sección (#rutas, #estado...) */
+html {
+  scroll-behavior: smooth;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--ink);
+  background: var(--bg);
+}
+
+body {
+  min-width: 320px;
+}
+
+/* Los botones y enlaces usan la misma letra que el resto de la página */
+button, a {
+  font: inherit;
+}
+
+/* La manito al pasar el mouse sobre un botón */
+button {
+  cursor: pointer;
+}
+
+/* El atributo hidden SIEMPRE oculta el elemento (!important gana a otras reglas) */
+[hidden] {
+  display: none !important;
+}
+
+/* Cuando la ventana de acceso está abierta, la página de atrás no se mueve */
+body.no-scroll {
+  overflow: hidden;
+}
+
+/* Deja un espacio arriba al llegar a una sección con un enlace (#...) */
+section, article, footer {
+  scroll-margin-top: 20px;
+}
+
+
+/* ================================================================
+   2. ENCABEZADO
+   ----------------------------------------------------------------
+   display: flex pone los elementos hijos uno al lado del otro.
+   ================================================================ */
+
+.site-header {
+  height: 101px;
+  background: #fff;
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  align-items: center;   /* centra verticalmente */
+  padding: 0 34px;
+  gap: 42px;             /* espacio entre los hijos */
+}
+
+/* Logo + nombre */
+.brand {
+  display: flex;
+  align-items: center;
+  text-decoration: none; /* quita el subrayado del enlace */
+  color: var(--cerulean);
+  min-width: 300px;
+}
+
+.brand img {
+  width: 70px;
+  height: 70px;
+  object-fit: contain;
+}
+
+.brand-name {
+  font-size: 29px;
+  font-weight: 700;
+  letter-spacing: -1.4px;
+  margin-left: 7px;
+}
+
+/* La palabra "Ubic" va en verde */
+.brand-name span {
+  color: #53a92b;
+}
+
+/* Menú principal */
+.main-nav {
+  display: flex;
+  align-self: stretch;
+  align-items: center;
+  gap: 34px;
+  flex: 1; /* ocupa todo el espacio que sobra */
+}
+
+.main-nav a {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: #111;
+  padding: 0 4px;
+  border-bottom: 3px solid transparent;
+  white-space: nowrap; /* el texto no se parte en dos líneas */
+}
+
+/* Enlace activo: línea azul abajo */
+.main-nav a.active {
+  color: var(--evergreen);
+  border-color: var(--cerulean);
+  font-weight: 650;
+}
+
+.main-nav a span {
+  margin-right: 7px;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.language,
+.account {
+  border: 0;
+  background: transparent;
+  white-space: nowrap;
+}
+
+.account {
+  border: 1px solid #dce3e6;
+  border-radius: 10px; /* esquinas redondeadas */
+  padding: 12px 18px;
+  background: #fff;
+}
+
+/* Botón "Mi cuenta" cuando hay sesión: muestra iniciales */
+.account.is-logged {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 14px 7px 7px;
+  font-weight: 600;
+  color: var(--evergreen);
+}
+
+.account-avatar {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%; /* 50% lo vuelve un círculo */
+  background: var(--cerulean);
+  color: #fff;
+  display: grid;
+  place-items: center; /* centra el contenido */
+  font-size: 12px;
+  font-weight: 700;
+}
+
+
+/* ================================================================
+   3. PORTADA Y BUSCADOR
+   ----------------------------------------------------------------
+   display: grid divide el espacio en columnas.
+   grid-template-columns: 1.2fr .9fr  -> 2 columnas (la 1ª más ancha)
+   ================================================================ */
+
+.hero {
+  min-height: 376px;
+  padding: 25px 68px 17px;
+  display: grid;
+  grid-template-columns: 1.2fr .9fr;
+  gap: 25px;
+  align-items: center;
+  background: linear-gradient(180deg, #f7fbfc, #fff); /* degradado de color */
+}
+
+.hero-copy h1 {
+  font-size: 50px;
+  line-height: 1.04;
+  margin: 0 0 13px;
+  letter-spacing: -2px;
+  color: #19333d;
+}
+
+.hero-copy h1 strong {
+  color: var(--evergreen);
+}
+
+.hero-copy > p {
+  font-size: 19px;
+  line-height: 1.35;
+  color: #69767d;
+  margin: 0 0 17px;
+}
+
+/* Tarjeta blanca del buscador */
+.search-card {
+  background: #fff;
+  border: 1px solid #e4eaec;
+  border-radius: 15px;
+  padding: 16px 20px 13px;
+  box-shadow: 0 5px 17px rgba(25, 56, 31, .08); /* sombra suave */
+}
+
+/* Fila: Desde | ⇄ | Hasta | Botón */
+.search-row {
+  display: grid;
+  grid-template-columns: 1fr 43px 1fr 150px;
+  gap: 13px;
+  align-items: center;
+}
+
+/* Cajas "Desde" y "Hasta" */
+.field {
+  height: 58px;
+  border: 1px solid #d8e1e4;
+  border-radius: 11px;
+  display: flex;
+  align-items: center;
+  padding: 0 13px;
+  gap: 10px;
+  color: #738087;
+}
+
+.field > span {
+  font-size: 22px;
+}
+
+.field > div {
+  display: flex;
+  flex-direction: column; /* uno debajo del otro */
+  flex: 1;
+}
+
+.field small {
+  font-size: 12px;
+  color: #18252b;
+}
+
+.field strong {
+  font-size: 13px;
+  font-weight: 500;
+  color: #7c878c;
+  margin-top: 2px;
+}
+
+.field b {
+  color: #4caf29;
+  font-size: 19px;
+  cursor: pointer;
+}
+
+/* Cuando se escribe dentro de la caja, el borde se pone azul */
+.field:focus-within {
+  border-color: var(--cerulean);
+  box-shadow: 0 0 0 3px #247ba01f;
+}
+
+/* Campo de texto "¿A dónde vas?" sin borde propio */
+.field-input {
+  border: 0;
+  outline: 0;
+  background: transparent;
+  padding: 0;
+  margin-top: 2px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: #18252b;
+  width: 100%;
+}
+
+.field-input::placeholder {
+  color: #7c878c;
+}
+
+.swap {
+  border: 0;
+  background: transparent;
+  font-size: 25px;
+  color: #19313b;
+}
+
+/* Botones azules principales */
+.search-btn,
+.primary-btn {
+  border: 0;
+  background: var(--cerulean);
+  color: #fff;
+  font-weight: 700;
+  border-radius: 10px;
+  height: 52px;
+  padding: 0 20px;
+}
+
+/* :hover = cuando el mouse pasa por encima */
+.search-btn:hover,
+.primary-btn:hover {
+  background: #1d6887;
+}
+
+.quick-title {
+  font-size: 13px;
+  font-weight: 700;
+  margin: 13px 0 8px;
+}
+
+.quick-links {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap; /* si no caben, bajan a otra línea */
+}
+
+.quick-links button {
+  border: 1px solid #dfe6e8;
+  background: #fff;
+  border-radius: 9px;
+  padding: 10px 15px;
+  color: #26353b;
+  font-size: 13px;
+}
+
+.quick-links button:hover {
+  border-color: var(--cerulean);
+}
+
+
+/* ================================================================
+   4. DIBUJO DEL BUS (solo con CSS)
+   ----------------------------------------------------------------
+   position: relative en el contenedor + position: absolute en los
+   hijos permite colocar cada pieza en un lugar exacto usando
+   top / bottom / left / right.
+   ================================================================ */
+
+.hero-art {
+  height: 345px;
+  position: relative;
+  overflow: hidden; /* lo que se sale no se ve */
+  border-radius: 48% 48% 22% 22%;
+  background: #dff4f9;
+}
+
+/* Cielo y pasto */
+.sky {
+  position: absolute;
+  inset: 0; /* ocupa todo el contenedor */
+  background:
+    radial-gradient(circle at 45% 34%, #fff 0 5%, transparent 6%),
+    linear-gradient(#e7f8fc 0 48%, #ccebc8 49% 100%);
+}
+
+/* Edificios */
+.city {
+  position: absolute;
+  bottom: 113px;
+  left: 40%;
+  display: flex;
+  align-items: end;
+  gap: 5px;
+  opacity: .35; /* semitransparente */
+}
+
+.city i {
+  display: block;
+  width: 35px;
+  background: #9dc2cc;
+  height: 80px;
+}
+
+/* :nth-child(2) = el segundo edificio, etc. Cada uno con otra altura */
+.city i:nth-child(2) { height: 112px; }
+.city i:nth-child(3) { height: 62px; }
+.city i:nth-child(4) { height: 132px; }
+.city i:nth-child(5) { height: 92px; }
+
+/* Árboles: un círculo verde + un tronco (hecho con :after) */
+.tree {
+  position: absolute;
+  width: 90px;
+  height: 90px;
+  background: #71b85b;
+  border-radius: 50%;
+  bottom: 116px;
+}
+
+.tree:after {
+  content: "";
+  position: absolute;
+  width: 16px;
+  height: 72px;
+  background: #6c8f4b;
+  left: 37px;
+  top: 60px;
+}
+
+.tree-a {
+  left: 12%;
+  bottom: 112px;
+}
+
+.tree-b {
+  right: 18%;
+  bottom: 120px;
+  width: 68px;
+  height: 68px;
+}
+
+/* Carreteras inclinadas con transform: rotate */
+.road {
+  position: absolute;
+  left: -7%;
+  width: 115%;
+  height: 145px;
+  background: #dfe4e3;
+  border-top: 9px solid #fff;
+  transform: rotate(-3deg);
+  bottom: -58px;
+}
+
+.road-front {
+  bottom: -78px;
+  transform: rotate(-13deg);
+  background: #d7dcdb;
+}
+
+/* Cuerpo del bus */
+.bus {
+  position: absolute;
+  width: 275px;
+  height: 142px;
+  right: 18%;
+  bottom: 92px;
+  background: #fff;
+  border-radius: 23px 26px 13px 13px;
+  border-bottom: 10px solid var(--cerulean);
+  box-shadow: 0 7px 14px #315e6633;
+  transform: skewY(-1deg);
+}
+
+.bus-top {
+  position: absolute;
+  left: 21px;
+  right: 21px;
+  top: 18px;
+  height: 61px;
+  background: #21424d;
+  border-radius: 12px 14px 7px 7px;
+}
+
+/* Ventanas */
+.bus-window {
+  position: absolute;
+  top: 25px;
+  width: 47px;
+  height: 48px;
+  background: #7ba6b1;
+  border-radius: 5px;
+}
+
+.w1 { left: 31px; }
+.w2 { left: 85px; }
+.w3 { left: 139px; }
+.w4 { left: 193px; }
+
+.bus-front {
+  position: absolute;
+  right: 0;
+  top: 78px;
+  width: 38px;
+  height: 48px;
+  background: #e9f1f2;
+  border-left: 3px solid #8aa4a8;
+  border-radius: 0 7px 9px 0;
+}
+
+/* Llantas */
+.wheel {
+  position: absolute;
+  bottom: -19px;
+  width: 38px;
+  height: 38px;
+  background: #26383d;
+  border-radius: 50%;
+  border: 8px solid #a9b5b7;
+}
+
+.wheel-a { left: 36px; }
+.wheel-b { right: 32px; }
+
+/* Círculo azul con el ícono de parada */
+.bus-sign {
+  position: absolute;
+  right: 6%;
+  top: 46px;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: var(--cerulean);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+}
+
+
+/* ================================================================
+   5. TABLERO
+   ================================================================ */
+
+/* 3 columnas: rutas | planificador | estado y novedades */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.15fr .83fr 1.08fr;
+  gap: 17px;
+  padding: 0 55px 17px;
+}
+
+/* Tarjeta blanca que usan varios paneles */
+.panel {
+  background: #fff;
+  border: 1px solid #e3eaec;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(25, 56, 31, .055);
+  overflow: hidden;
+}
+
+/* Título del panel + enlace "Ver todas" */
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* uno a cada extremo */
+  padding: 15px 21px 10px;
+}
+
+.panel-head h2 {
+  font-size: 17px;
+  margin: 0;
+  color: #172a30;
+}
+
+.panel-head a {
+  font-size: 13px;
+  color: #005b91;
+  text-decoration: none;
+}
+
+.centered {
+  justify-content: center;
+}
+
+/* ----- Filas de rutas ----- */
+.route-row {
+  display: grid;
+  grid-template-columns: 51px 1fr 100px 16px;
+  align-items: center;
+  gap: 11px;
+  min-height: 58px;
+  margin: 0 20px;
+  border-top: 1px solid #edf0f1;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Cuadrito de color con el código (R10, M404...) */
+.route-code {
+  display: grid;
+  place-items: center;
+  height: 38px;
+  border-radius: 7px;
+  color: #fff;
+  font-weight: 800;
+  font-size: 16px;
+}
+
+/* Colores de las rutas */
+.blue  { background: var(--cerulean); }
+.green { background: #168c68; }
+.lime  { background: #b6d92d; color: #17311e; }
+.sea   { background: var(--seaweed); }
+
+.route-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+/* text-overflow: ellipsis pone "..." si el texto no cabe */
+.route-info b {
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.route-info small,
+.route-time small {
+  font-size: 11px;
+  color: #7c888d;
+  margin-top: 3px;
+}
+
+.route-time {
+  font-size: 13px;
+  color: #16262c;
+}
+
+.route-row > span:last-child {
+  font-size: 25px;
+  color: #697a80;
+}
+
+/* Mensaje cuando no se encuentran rutas */
+.route-empty {
+  margin: 0 20px 18px;
+  padding: 16px;
+  border: 1px dashed #d8e1e4;
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* ----- Planificador con mini mapa ----- */
+.planner-panel {
+  padding-bottom: 15px;
+  text-align: center;
+}
+
+.mini-map {
+  height: 169px;
+  margin: 0 18px;
+  background: #eef2f0;
+  position: relative;
+  overflow: hidden;
+  border-radius: 11px;
+  background-image:
+    linear-gradient(25deg, transparent 48%, #d4dbd9 49% 50%, transparent 51%),
+    linear-gradient(115deg, transparent 47%, #d4dbd9 48% 49%, transparent 50%);
+}
+
+/* Líneas de las rutas en el mapa */
+.line {
+  position: absolute;
+  height: 5px;
+  border-radius: 5px;
+  transform-origin: left center;
+}
+
+.l1 { width: 270px; left: 15px;  top: 102px; background: #1b9d9a; transform: rotate(-19deg); }
+.l2 { width: 245px; left: 55px;  top: 40px;  background: #247ba0; transform: rotate(35deg); }
+.l3 { width: 190px; left: 106px; top: 128px; background: #9fd356; transform: rotate(-65deg); }
+.l4 { width: 210px; left: 130px; top: 54px;  background: #8aa9c0; transform: rotate(85deg); }
+
+/* Puntos = paradas */
+.dot {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  border: 3px solid #fff;
+  border-radius: 50%;
+  background: var(--cerulean);
+  box-shadow: 0 0 0 1px #247ba0;
+}
+
+.d1 { left: 74px;  top: 90px; }
+.d2 { left: 141px; top: 42px; }
+.d3 { left: 204px; top: 108px; }
+.d4 { left: 262px; top: 71px; }
+.d5 { left: 118px; top: 128px; }
+
+/* Punto grande = "tu ubicación" */
+.location-dot {
+  position: absolute;
+  left: 48%;
+  top: 49%;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background: #fff;
+  border: 7px solid var(--cerulean);
+  box-shadow: 0 0 0 4px #ffffffaa;
+}
+
+.planner-panel p {
+  font-size: 13px;
+  line-height: 1.35;
+  color: #66757c;
+  margin: 12px 0;
+}
+
+.primary-btn {
+  height: 42px;
+  width: 76%;
+  font-size: 14px;
+}
+
+/* ----- Columna derecha: estado y novedades ----- */
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.service-panel {
+  background: #fbfffa;
+}
+
+.service-ok {
+  margin: 3px 16px 0;
+  border: 1px solid #d9e9dc;
+  border-radius: 11px;
+  padding: 13px;
+  display: flex;
+  gap: 11px;
+  align-items: center;
+}
+
+/* Círculo verde con el ✓ */
+.check {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #5caf35;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 800;
+  font-size: 20px;
+}
+
+.service-ok div:last-child {
+  display: flex;
+  flex-direction: column;
+}
+
+.service-ok b {
+  font-size: 13px;
+  color: #19552b;
+}
+
+.service-ok span {
+  font-size: 11px;
+  color: #68766d;
+  margin-top: 3px;
+}
+
+.updated {
+  font-size: 11px;
+  color: #697570;
+  padding: 9px 17px;
+}
+
+/* El botón ↻ va flotando a la derecha */
+.updated span {
+  float: right;
+  font-size: 18px;
+  color: #1d5a37;
+  cursor: pointer;
+}
+
+/* Cada novedad: ícono | texto | hora */
+.news {
+  display: grid;
+  grid-template-columns: 31px 1fr 57px;
+  gap: 10px;
+  margin: 4px 16px 9px;
+  padding: 10px;
+  border-radius: 9px;
+  align-items: start;
+}
+
+.news > span {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+}
+
+.news b {
+  display: block;
+  font-size: 12px;
+}
+
+.news small {
+  display: block;
+  font-size: 11px;
+  line-height: 1.25;
+  margin-top: 2px;
+}
+
+.news time {
+  font-size: 10px;
+  text-align: right;
+  color: #65747a;
+}
+
+/* Novedad de advertencia (amarilla) */
+.warning {
+  background: #fff8e7;
+  border: 1px solid #f0ddb0;
+}
+
+.warning > span {
+  background: #f5b523;
+  color: #fff;
+}
+
+/* Novedad informativa (azul) */
+.info {
+  background: #edf7fb;
+  border: 1px solid #cfe5ee;
+}
+
+.info > span {
+  background: var(--cerulean);
+  color: #fff;
+}
+
+
+/* ================================================================
+   6. BENEFICIOS Y PIE DE PÁGINA
+   ================================================================ */
+
+.features {
+  margin: 0 55px 17px;
+  background: #f5fbf5;
+  border: 1px solid #e1eee1;
+  border-radius: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 columnas iguales */
+  padding: 17px 30px;
+  gap: 30px;
+}
+
+.features > div {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  cursor: pointer;
+}
+
+.features > div > span {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: #e6f3e5;
+  color: #087c4d;
+  display: grid;
+  place-items: center;
+  font-size: 24px;
+}
+
+.features b {
+  font-size: 13px;
+  color: #17442c;
+}
+
+.features p {
+  margin: 5px 0 0;
+  color: #68757a;
+  font-size: 11px;
+  line-height: 1.35;
+}
+
+footer {
+  height: 62px;
+  background: #087a4f;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 60px;
+}
+
+.footer-brand {
+  font-size: 15px;
+}
+
+.footer-pin {
+  font-size: 22px;
+  margin-right: 9px;
+}
+
+.social {
+  font-size: 14px;
+}
+
+/* Íconos de redes: se pueden tocar */
+.social span {
+  cursor: pointer;
+}
+
+
+/* ================================================================
+   7. VENTANA DE ACCESO (MODAL)
+   ----------------------------------------------------------------
+   position: fixed la deja quieta encima de toda la página.
+   z-index: un número alto la pone POR ENCIMA de lo demás.
+   ================================================================ */
+
+/* Fondo oscuro transparente */
+.auth-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(17, 37, 30, .48);
+  backdrop-filter: blur(3px); /* desenfoca lo de atrás */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fade-in .2s ease;
+}
+
+/* Tarjeta blanca */
+.auth-card {
+  position: relative;
+  width: 100%;
+  max-width: 470px;
+  max-height: calc(100vh - 40px); /* vh = alto de la pantalla */
+  overflow: auto;
+  background: #fff;
+  border: 1px solid #e4eaec;
+  border-radius: 18px;
+  padding: 24px 28px 22px;
+  box-shadow: 0 18px 48px rgba(25, 56, 31, .22);
+  animation: pop-in .22s ease;
+}
+
+/* Botón × para cerrar */
+.auth-close {
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 50%;
+  background: #f1f5f6;
+  color: #4a5a60;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.auth-close:hover {
+  background: #e3eaec;
+}
+
+.auth-brand {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--cerulean);
+  margin-bottom: 14px;
+}
+
+.auth-brand img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+}
+
+.auth-brand .brand-name {
+  font-size: 22px;
+  margin-left: 0;
+}
+
+/* Pestañas "Iniciar sesión" / "Crear cuenta" */
+.auth-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: #f1f5f6;
+  border-radius: 11px;
+  padding: 4px;
+  margin-bottom: 16px;
+}
+
+.auth-tabs button {
+  border: 0;
+  background: transparent;
+  border-radius: 8px;
+  padding: 9px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.auth-tabs button.is-active {
+  background: #fff;
+  color: var(--evergreen);
+  box-shadow: 0 1px 4px rgba(25, 56, 31, .12);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+
+.auth-form h2 {
+  margin: 0;
+  font-size: 21px;
+  letter-spacing: -.5px;
+  color: #19333d;
+}
+
+.auth-sub {
+  margin: -4px 0 4px;
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* Formulario en 2 columnas */
+.auth-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 11px;
+}
+
+/* Campo que ocupa las 2 columnas */
+.auth-span {
+  grid-column: 1 / -1;
+}
+
+/* ----- Campos de formulario (se usan en toda la aplicación) ----- */
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #18252b;
+}
+
+/* Asterisco rojo de "obligatorio" */
+.auth-field em {
+  color: #c4433a;
+  font-style: normal;
+}
+
+.auth-field input,
+.auth-field select,
+.acc-toolbar input,
+.acc-toolbar select,
+.acc-select-sm {
+  height: 44px;
+  border: 1px solid #d8e1e4;
+  border-radius: 10px;
+  padding: 0 13px;
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 400;
+  color: var(--ink);
+  background: #fff;
+  width: 100%;
+  transition: border-color .15s, box-shadow .15s; /* cambio suave de color */
+}
+
+/* :focus = cuando el campo está seleccionado */
+.auth-field input:focus,
+.auth-field select:focus,
+.acc-toolbar input:focus,
+.acc-toolbar select:focus {
+  outline: 0;
+  border-color: var(--cerulean);
+  box-shadow: 0 0 0 3px #247ba01f;
+}
+
+/* Campo de solo lectura (ej: el correo en "Mi perfil") */
+.auth-field input[readonly] {
+  background: #f5f8f9;
+  color: var(--muted);
+}
+
+.auth-field small,
+.auth-hint {
+  font-size: 11px;
+  font-weight: 400;
+  color: #7c888d;
+}
+
+/* Campo con error: borde rojo (la clase has-error la pone JavaScript) */
+.auth-field.has-error input,
+.auth-field.has-error select {
+  border-color: #c4433a;
+  box-shadow: 0 0 0 3px #c4433a1a;
+}
+
+/* Contraseña con botón "Ver" adentro */
+.auth-pass {
+  position: relative;
+}
+
+.auth-pass input {
+  padding-right: 72px;
+}
+
+.auth-eye {
+  position: absolute;
+  right: 6px;
+  top: 6px;
+  height: 32px;
+  border: 0;
+  border-radius: 7px;
+  background: #eef4f6;
+  color: var(--cerulean);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0 10px;
+}
+
+/* Casilla de "Acepto los términos" */
+.auth-check {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+.auth-check input {
+  margin-top: 2px;
+  accent-color: var(--seaweed);
+}
+
+.auth-check.has-error {
+  color: #c4433a;
+}
+
+/* Mensaje de error en rojo. Si está vacío (:empty) no se muestra. */
+.auth-error {
+  margin: 0;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #c4433a;
+}
+
+.auth-error:empty {
+  display: none;
+}
+
+.auth-submit {
+  width: 100%;
+  height: 46px;
+  font-size: 14px;
+  margin-top: 2px;
+}
+
+/* Botón que parece enlace */
+.auth-link {
+  border: 0;
+  background: transparent;
+  color: #005b91;
+  font-size: 12.5px;
+  font-weight: 600;
+  padding: 2px;
+  align-self: center;
+}
+
+.auth-link:hover {
+  text-decoration: underline;
+}
+
+/* Caja de intentos (amarilla; roja si está bloqueada) */
+.auth-attempts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+  color: #8a6a12;
+  background: #fff8e7;
+  border: 1px solid #f0ddb0;
+  border-radius: 9px;
+  padding: 9px 11px;
+}
+
+.auth-attempts.is-locked {
+  color: #a9362e;
+  background: #fbeae8;
+  border-color: #f0cfcb;
+}
+
+.auth-attempts .auth-link {
+  padding: 0;
+  color: inherit;
+  text-decoration: underline;
+}
+
+/* Los 3 puntos de intentos */
+.auth-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.auth-dots i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: var(--seaweed);
+}
+
+.auth-dots i.is-used {
+  background: #c4433a;
+}
+
+/* Caja de cuentas de prueba */
+.auth-demo {
+  border: 1px solid #e1eee1;
+  background: #f5fbf5;
+  border-radius: 11px;
+  padding: 9px 12px;
+  font-size: 12px;
+}
+
+.auth-demo summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #17442c;
+}
+
+#listaCuentasPrueba {
+  display: grid;
+  gap: 6px;
+  margin-top: 9px;
+}
+
+.auth-demo button {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid #dfe9df;
+  background: #fff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font-size: 12px;
+  text-align: left;
+}
+
+.auth-demo button:hover {
+  border-color: var(--seaweed);
+}
+
+.auth-demo button b {
+  color: #17442c;
+}
+
+.auth-demo button span {
+  color: var(--muted);
+}
+
+/* Animaciones: @keyframes dice cómo cambia algo desde (from) hasta (to) */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes pop-in {
+  from { opacity: 0; transform: translateY(10px) scale(.98); }
+  to   { opacity: 1; transform: none; }
+}
+
+
+/* ================================================================
+   8. MENSAJES FLOTANTES ("toast")
+   ================================================================ */
+
+.toast-stack {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 200;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: min(380px, calc(100vw - 40px));
+}
+
+/* Empieza invisible (opacity: 0) y un poco más abajo */
+.toast {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--cerulean);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 13px;
+  color: var(--ink);
+  box-shadow: 0 8px 24px rgba(25, 56, 31, .16);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity .25s, transform .25s;
+}
+
+/* JavaScript le agrega esta clase para que aparezca */
+.toast.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Color de la raya izquierda según el tipo */
+.toast--exito { border-left-color: var(--seaweed); }
+.toast--error { border-left-color: #c4433a; }
+.toast--aviso { border-left-color: #f5b523; }
+
+
+/* ================================================================
+   9. PÁGINA "MI CUENTA"
+   ================================================================ */
+
+.acc-body {
+  background: var(--bg);
+}
+
+/* 2 columnas: menú (290px) | contenido (el resto) */
+.acc-layout {
+  display: grid;
+  grid-template-columns: 290px 1fr;
+  gap: 18px;
+  padding: 22px 55px 28px;
+  align-items: start;
+  min-height: calc(100vh - 163px);
+}
+
+/* Menú lateral. sticky = se queda pegado al bajar la página */
+.acc-side {
+  padding: 20px 16px 16px;
+  position: sticky;
+  top: 18px;
+}
+
+.acc-profile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 3px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #edf0f1;
+}
+
+/* Círculo grande con las iniciales */
+.acc-avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 23px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 8px;
+  box-shadow: 0 0 0 5px #fff, 0 0 0 6px #e3eaec;
+}
+
+/* Un color por cada rol */
+.acc-avatar--cliente       { background: var(--cerulean); }
+.acc-avatar--administrador { background: var(--evergreen); }
+.acc-avatar--operativo     { background: #1b9d9a; }
+.acc-avatar--conductor     { background: var(--seaweed); }
+.acc-avatar--propietario   { background: #6e8f2c; }
+
+.acc-profile b {
+  font-size: 15px;
+  color: #172a30;
+}
+
+.acc-profile > span {
+  font-size: 12px;
+  color: var(--muted);
+  word-break: break-all;
+}
+
+.acc-profile p {
+  margin: 8px 0 0;
+  font-size: 11.5px;
+  line-height: 1.4;
+  color: var(--muted);
+}
+
+/* Etiqueta del rol (pastilla de color) */
+.acc-role {
+  display: inline-block;
+  margin-top: 6px;
+  font-style: normal;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.acc-role--cliente       { background: #eaf3f7; color: var(--cerulean); }
+.acc-role--administrador { background: #e4ece5; color: var(--evergreen); }
+.acc-role--operativo     { background: #e3f4f3; color: #13807d; }
+.acc-role--conductor     { background: #e7f6f0; color: #168c68; }
+.acc-role--propietario   { background: #f1f8e3; color: #58731f; }
+
+/* Botones del menú lateral */
+.acc-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 12px 0;
+}
+
+.acc-menu button {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border: 0;
+  background: transparent;
+  border-radius: 9px;
+  padding: 10px 12px;
+  font-size: 13.5px;
+  color: #26353b;
+  text-align: left;
+}
+
+.acc-menu button span {
+  width: 18px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.acc-menu button:hover {
+  background: #f3f7f8;
+}
+
+/* Opción elegida: fondo azul */
+.acc-menu button.is-active {
+  background: var(--cerulean);
+  color: #fff;
+  font-weight: 600;
+}
+
+.acc-menu button.is-active span {
+  color: #fff;
+}
+
+.acc-logout {
+  width: 100%;
+  border: 1px solid #f0cfcb;
+  background: #fdf6f5;
+  color: #a9362e;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.acc-logout:hover {
+  background: #fbeae8;
+}
+
+/* ----- Contenido de la derecha ----- */
+.acc-main {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+.acc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.acc-head h1 {
+  margin: 0;
+  font-size: 27px;
+  letter-spacing: -1px;
+  color: #19333d;
+}
+
+.acc-head p {
+  margin: 3px 0 0;
+  font-size: 13.5px;
+  color: var(--muted);
+}
+
+/* Tarjeta blanca de cada bloque */
+.acc-card {
+  background: #fff;
+  border: 1px solid #e3eaec;
+  border-radius: 14px;
+  box-shadow: 0 3px 12px rgba(25, 56, 31, .055);
+  padding: 20px 22px;
+}
+
+.acc-card--flush {
+  padding: 6px 0;
+}
+
+.acc-card h2 {
+  margin: 0 0 14px;
+  font-size: 17px;
+  color: #172a30;
+}
+
+.acc-card h3 {
+  margin: 16px 0 8px;
+  font-size: 13px;
+  color: #172a30;
+}
+
+/* Formularios de 2 columnas */
+.acc-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 13px 16px;
+}
+
+.acc-grid + .acc-grid {
+  margin-top: 13px;
+}
+
+.acc-card .auth-error {
+  margin-top: 12px;
+}
+
+/* Fila de botones al final de un formulario (a la derecha) */
+.acc-actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 16px;
+}
+
+.acc-actions .primary-btn {
+  width: auto;
+  height: 42px;
+  padding: 0 20px;
+  font-size: 13.5px;
+}
+
+/* Botón blanco con borde */
+.btn-ghost {
+  height: 42px;
+  border: 1px solid #d8e1e4;
+  background: #fff;
+  border-radius: 10px;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #26353b;
+}
+
+.btn-ghost:hover {
+  background: #f3f7f8;
+}
+
+/* Botón pequeño (tablas) */
+.btn-small {
+  height: 32px;
+  border: 1px solid #d8e1e4;
+  background: #fff;
+  border-radius: 8px;
+  padding: 0 11px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #26353b;
+  white-space: nowrap;
+}
+
+.btn-small:hover {
+  background: #f3f7f8;
+}
+
+/* Botón rojo (eliminar) */
+.btn-danger {
+  color: #a9362e;
+  border-color: #f0cfcb;
+}
+
+.btn-danger:hover {
+  background: #fbeae8;
+}
+
+.acc-actions .btn-small {
+  height: 42px;
+  padding: 0 16px;
+  margin-right: auto; /* lo empuja a la izquierda */
+}
+
+.primary-btn.btn-danger-solid {
+  background: #c4433a;
+}
+
+.primary-btn.btn-danger-solid:hover {
+  background: #a9362e;
+}
+
+/* Enlace que se ve como botón */
+.acc-btn-link {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  width: auto;
+  padding: 0 22px;
+  margin-top: 6px;
+}
+
+/* ----- Tarjetitas con números (KPI) ----- */
+.acc-kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); /* tantas columnas como quepan */
+  gap: 12px;
+}
+
+.acc-kpi {
+  background: #fff;
+  border: 1px solid #e3eaec;
+  border-radius: 12px;
+  padding: 13px 15px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.acc-kpi span {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.acc-kpi b {
+  font-size: 18px;
+  color: #172a30;
+}
+
+/* La tarjeta principal va en verde oscuro */
+.acc-kpi.is-main {
+  background: var(--evergreen);
+  border-color: var(--evergreen);
+}
+
+.acc-kpi.is-main span {
+  color: var(--yellow-green);
+}
+
+.acc-kpi.is-main b {
+  color: #fff;
+  font-size: 24px;
+}
+
+/* ----- Etiquetas de estado ----- */
+.acc-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.acc-badge--ok   { background: #e7f6f0; color: var(--seaweed); }
+.acc-badge--warn { background: #fff8e7; color: #b4860f; }
+.acc-badge--off  { background: #fbeae8; color: #c4433a; }
+.acc-badge--info { background: #eaf3f7; color: var(--cerulean); }
+
+/* Texto verde de "turno en curso" */
+.acc-live {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--seaweed);
+}
+
+.acc-empty {
+  margin: 0;
+  padding: 18px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+/* ----- Tablas ----- */
+.acc-toolbar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.acc-toolbar input {
+  flex: 1;
+}
+
+.acc-toolbar select {
+  width: 200px;
+}
+
+/* Si la tabla es muy ancha, aparece una barra para moverla de lado */
+.acc-table-wrap {
+  overflow-x: auto;
+  margin: 0 -4px;
+}
+
+.acc-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+/* th = celdas del título de la tabla */
+.acc-table th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase; /* MAYÚSCULAS */
+  letter-spacing: .05em;
+  color: #7c888d;
+  font-weight: 700;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e3eaec;
+  white-space: nowrap;
+}
+
+/* td = celdas normales */
+.acc-table td {
+  padding: 10px;
+  border-bottom: 1px solid #edf0f1;
+  vertical-align: middle;
+}
+
+.acc-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.acc-table td small {
+  display: block;
+  font-size: 11px;
+  color: #7c888d;
+}
+
+/* Letra de máquina de escribir para las placas */
+.acc-table .mono {
+  font-family: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  letter-spacing: .5px;
+}
+
+.acc-row-actions {
+  display: flex;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+.acc-cell-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 200px;
+}
+
+.acc-cell-user b {
+  display: block;
+  font-size: 13px;
+}
+
+/* Circulito con iniciales en la tabla */
+.acc-mini {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Lista desplegable pequeña (estado del bus, rol del usuario) */
+.acc-select-sm {
+  height: 34px;
+  width: auto;
+  padding: 0 8px;
+  font-size: 12px;
+}
+
+.route-code--sm {
+  height: 26px;
+  width: 46px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+
+/* ----- Rutas favoritas ----- */
+.acc-card--flush .route-row {
+  grid-template-columns: 51px 1fr 100px 40px;
+  cursor: default;
+}
+
+.acc-card--flush .route-row:first-child {
+  border-top: 0;
+}
+
+/* Botón de la estrella */
+.fav-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  border: 1px solid #dfe6e8;
+  background: #fff;
+  font-size: 19px;
+  color: #9aa6ab;
+}
+
+.fav-btn:hover {
+  border-color: #f5b523;
+  color: #f5b523;
+}
+
+.fav-btn.is-on {
+  background: #fff8e7;
+  border-color: #f0ddb0;
+  color: #f5b523;
+}
+
+/* ----- Tarjetas de buses ----- */
+.acc-bus-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.acc-bus-head h2 {
+  margin: 0;
+}
+
+.acc-bus-head p {
+  margin: 3px 0 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+.acc-bus-head .acc-badge {
+  margin-left: auto; /* empuja la etiqueta a la derecha */
+}
+
+/* Placa amarilla como las de Colombia */
+.acc-plate {
+  background: #f5c518;
+  color: #111;
+  border: 2px solid #111;
+  border-radius: 7px;
+  padding: 6px 11px;
+  font-family: "JetBrains Mono", ui-monospace, Consolas, monospace;
+  font-weight: 800;
+  font-size: 16px;
+  letter-spacing: 1px;
+  white-space: nowrap;
+}
+
+.acc-bus-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #edf0f1;
+  align-items: end;
+}
+
+.acc-bus-info > div {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.acc-bus-info > div span {
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.acc-bus-info > div b {
+  font-size: 13px;
+  color: #172a30;
+}
+
+/* Formulario para editar el bus (línea punteada arriba) */
+.acc-bus form {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px dashed #d8e1e4;
+}
+
+/* Historial de turnos */
+.acc-history {
+  list-style: none; /* sin viñetas */
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 6px;
+}
+
+.acc-history li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12.5px;
+  background: #f7fafb;
+  border-radius: 8px;
+  padding: 8px 11px;
+  color: var(--muted);
+}
+
+.acc-history b {
+  color: #172a30;
+}
+
+/* Tarjeta verde del centro de control */
+.acc-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: linear-gradient(120deg, var(--evergreen), #1d4a2a);
+  border: 0;
+  color: #fff;
+}
+
+.acc-hero h2 {
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.acc-hero p {
+  margin: 0 0 12px;
+  font-size: 13.5px;
+  color: #d5e5d6;
+  max-width: 460px;
+  line-height: 1.45;
+}
+
+.acc-hero-icon {
+  width: 90px;
+  height: 90px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: rgba(159, 211, 86, .16);
+  color: var(--yellow-green);
+  display: grid;
+  place-items: center;
+  font-size: 44px;
+}
+
+
+/* ================================================================
+   10. PANTALLAS PEQUEÑAS
+   ----------------------------------------------------------------
+   @media (max-width: 1200px) { ... } significa:
+   "aplica estas reglas SOLO si la pantalla mide 1200px o menos".
+   Así la página se acomoda en tabletas y celulares.
+   ================================================================ */
+
+/* Pantallas medianas (portátiles pequeños) */
+@media (max-width: 1200px) {
+  .site-header { gap: 18px; padding: 0 20px; }
+  .brand { min-width: 235px; }
+  .main-nav { gap: 18px; }
+  .hero { padding-left: 40px; padding-right: 40px; }
+  .dashboard-grid { padding-left: 35px; padding-right: 35px; }
+  .features { margin-left: 35px; margin-right: 35px; }
+  .acc-layout { padding-left: 35px; padding-right: 35px; }
+}
+
+/* Tabletas */
+@media (max-width: 950px) {
+  .main-nav a:nth-child(n+5) { display: none; } /* oculta del 5º enlace en adelante */
+  .hero { grid-template-columns: 1fr; }
+  .hero-art { display: none; }
+  .dashboard-grid { grid-template-columns: 1fr 1fr; }
+  .right-column { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr 1fr; }
+  .features { grid-template-columns: 1fr; }
+
+  .acc-layout { grid-template-columns: 1fr; }
+  .acc-side { position: static; }
+  .acc-menu { flex-direction: row; flex-wrap: wrap; }
+  .acc-menu button { flex: 1 1 auto; justify-content: center; }
+}
+
+/* Celulares */
+@media (max-width: 680px) {
+  .site-header { height: auto; min-height: 75px; flex-wrap: wrap; padding: 8px 15px; }
+  .brand { min-width: 0; flex: 1; }
+  .brand img { width: 48px; height: 48px; }
+  .brand-name { font-size: 22px; }
+  .main-nav { order: 3; overflow: auto; width: 100%; height: 44px; gap: 20px; }
+  .main-nav a { font-size: 13px; }
+  .header-actions { gap: 5px; }
+  .language { display: none; }
+  .account { padding: 9px 12px; }
+  .account.is-logged { padding: 5px 10px 5px 5px; }
+
+  .hero { padding: 25px 18px; }
+  .hero-copy h1 { font-size: 38px; }
+  .search-row { grid-template-columns: 1fr; }
+  .swap { transform: rotate(90deg); }
+  .search-btn { width: 100%; }
+
+  .dashboard-grid { grid-template-columns: 1fr; padding: 0 18px 15px; }
+  .right-column { grid-column: auto; display: flex; }
+  .features { margin: 0 18px 15px; padding: 16px; }
+  .route-row { grid-template-columns: 48px 1fr 70px 10px; margin: 0 12px; }
+  .route-info b { font-size: 12px; }
+  .route-time { font-size: 12px; }
+  footer { height: auto; padding: 18px; gap: 12px; flex-direction: column; align-items: flex-start; }
+
+  .auth-card { padding: 20px 18px; }
+  .acc-layout { padding: 16px 18px 20px; }
+  .acc-grid, .auth-grid { grid-template-columns: 1fr; }
+  .acc-head h1 { font-size: 23px; }
+  .acc-toolbar { flex-direction: column; }
+  .acc-toolbar select { width: 100%; }
+  .acc-bus-head { flex-wrap: wrap; }
+  .acc-card { padding: 16px; }
+  .acc-card--flush { padding: 4px 0; }
+  .acc-card--flush .route-row { grid-template-columns: 48px 1fr 40px; }
+  .acc-card--flush .route-time { display: none; }
+  .acc-hero-icon { display: none; }
+}

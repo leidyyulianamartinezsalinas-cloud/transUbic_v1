@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<!--
+  ================================================================
+  cuenta.html — PÁGINA "MI CUENTA"
+  ----------------------------------------------------------------
+  Solo se puede ver si la persona inició sesión.
+  Tiene dos partes:
+    - A la izquierda (id="menuLateral"): foto con iniciales, nombre,
+      rol y el menú de opciones.
+    - A la derecha (id="contenido"): la sección elegida en el menú.
+
+  Las dos partes empiezan VACÍAS. JavaScript (js/cuenta.js) las llena
+  según el rol: un administrador ve opciones distintas a un conductor.
+  ================================================================
+-->
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>transUbic | Mi cuenta</title>
+  <link rel="stylesheet" href="css/estilos.css">
+  <link rel="icon" type="image/png" href="img/logo.png">
+</head>
+<body class="acc-body">
+
+  <!-- Encabezado: igual al de la página de inicio.
+       Los enlaces llevan a index.html y bajan a la sección (#rutas, #estado...) -->
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <img src="img/logo.png" alt="transUbic">
+      <span class="brand-name">trans<span>Ubic</span></span>
+    </a>
+
+    <nav class="main-nav">
+      <a href="index.html"><span>⌂</span> Inicio</a>
+      <a href="index.html#rutas">Rutas</a>
+      <a href="index.html#planificador">Paradas</a>
+      <a href="index.html#estado">Horarios</a>
+      <a href="index.html#beneficios">Tarifas</a>
+      <a href="index.html#novedades">Novedades</a>
+      <a href="index.html#ayuda">Ayuda</a>
+    </nav>
+
+    <div class="header-actions">
+      <button class="language" id="botonIdioma" type="button" onclick="cambiarIdioma()">◎ &nbsp; ES⌄</button>
+      <!-- En esta página el botón lleva a "Mi perfil" -->
+      <button class="account" id="botonCuenta" type="button" onclick="irA('perfil')">● &nbsp; Mi cuenta</button>
+    </div>
+  </header>
+
+  <main class="acc-layout">
+    <!-- Columna izquierda: la llena la función mostrarMenuLateral() -->
+    <aside class="panel acc-side" id="menuLateral"></aside>
+
+    <!-- Columna derecha: la llena la función mostrarSeccion() -->
+    <section class="acc-main" id="contenido"></section>
+  </main>
+
+  <footer>
+    <div class="footer-brand"><span class="footer-pin">⌖</span><b>transUbic</b>, movilidad que conecta contigo.</div>
+    <div class="social">Síguenos en &nbsp;
+      <span onclick="abrirRedSocial('Facebook')">●</span> &nbsp;
+      <span onclick="abrirRedSocial('Instagram')">◎</span> &nbsp;
+      <span onclick="abrirRedSocial('X')">𝕏</span> &nbsp;
+      <span onclick="abrirRedSocial('YouTube')">▶</span>
+    </div>
+  </footer>
+
+  <script src="js/datos.js"></script>
+  <script src="js/cuenta.js"></script>
+</body>
+</html>
